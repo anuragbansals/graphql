@@ -6,7 +6,6 @@ import resolvers from "./graphql/resolvers/index.js";
 import typeDefs from "./graphql/typeDefs.js";
 import { MONGODB } from "./config.js";
 
-
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -14,6 +13,9 @@ const server = new ApolloServer({
 
 mongoose.connect(MONGODB).then(async () => {
   console.log("Mongo connected!!");
-  const { url } = await startStandaloneServer(server);
+  const { url } = await startStandaloneServer(server, {
+    // from here we pass the headers to all the requests
+    context: async ({ req }) => ({ req }),
+  });
   console.log("Server ready at" + url);
 });
