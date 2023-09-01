@@ -5,16 +5,24 @@ import {
   ApolloProvider,
   gql,
 } from "@apollo/client";
+import { RouterProvider } from "react-router-dom";
+
 import React from "react";
-import App from "./App";
+import App, { appRouter } from "./App";
+
+const link = createHttpLink({
+  link: "http://localhost:4000/graphql/"
+})
 
 const client = new ApolloClient({
-  link: "http://localhost:5000",
+  link: link,
   cache: new InMemoryCache(),
 });
 
 export default (
   <ApolloProvider client={client}>
-    <App />
+    <RouterProvider router={appRouter} >
+      <App />
+    </RouterProvider>
   </ApolloProvider>
 );
