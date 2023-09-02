@@ -10,12 +10,9 @@ import { RouterProvider } from "react-router-dom";
 import React from "react";
 import App, { appRouter } from "./App";
 
-const link = createHttpLink({
-  link: "http://localhost:4000/graphql/"
-})
 
 const client = new ApolloClient({
-  link: link,
+  uri: "http://localhost:4000/graphql/",
   cache: new InMemoryCache(),
 });
 

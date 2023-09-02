@@ -27,13 +27,9 @@ export default {
   Mutation: {
     async createPost(_, { body }, context) {
       const user = checkAuth(context);
-
       if(body.trim()===''){
         throw new Error('Pot must not be empty!');
       }
-
-
-
       const newPost = new Post({
         body,
         user: user.id,
@@ -50,7 +46,7 @@ export default {
       try {
         const post = await Post.findById(postId);
         if (user.username === post.username) {
-          await post.delete();
+          await post.deleteOne();
           return "Post deleted successfully!";
         } else {
           throw new Error("Action not allowed");

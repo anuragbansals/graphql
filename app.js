@@ -19,5 +19,4 @@ mongoose.connect(MONGODB).then(async () => {
     // from here we pass the headers to all the requests
     context: async ({ req }) => ({ req }),
   });
-  console.log("Server ready at" + url);
 });

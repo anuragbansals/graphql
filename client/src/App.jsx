@@ -13,7 +13,6 @@ function App() {
   return (
     <Container>
       <MenuBar/>
-      <h1>Hi World!</h1>
       <Outlet/>
     </Container>
   )
