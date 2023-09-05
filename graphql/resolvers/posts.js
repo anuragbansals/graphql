@@ -1,5 +1,8 @@
 import Post from "../../models/Post.js";
 import { checkAuth } from "../../utils/checkAuth.js";
+import { PubSub } from "graphql-subscriptions";
+
+const pubSub = new PubSub();
 
 export default {
   Query: {
@@ -38,6 +41,10 @@ export default {
       });
 
       const post = await newPost.save();
+
+      context.pubSub.publish('NEW_POST', {
+        newPost: post
+      })
       return post;
     },
 
@@ -79,4 +86,9 @@ export default {
       }
     },
   },
+  Subscription: {
+    newPost: {
+      subscribe: (_,__, {}) => pubSub.asyncIterator('NEW_POST')
+    }
+  }
 };

@@ -17,4 +17,7 @@ export default {
     ...postsResolvers.Mutation,
     ...commentsResolvers.Mutation,
   },
+  Subscription: {
+    ...postsResolvers.Subscription
+  }
 };
