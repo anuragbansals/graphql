@@ -42,7 +42,7 @@ export default {
 
       const post = await newPost.save();
 
-      context.pubSub.publish('NEW_POST', {
+      pubSub.publish('NEW_POST', {
         newPost: post
       })
       return post;

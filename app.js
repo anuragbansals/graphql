@@ -16,6 +16,7 @@ import { PubSub } from "graphql-subscriptions";
 import resolvers from "./graphql/resolvers/index.js";
 import typeDefs from "./graphql/typeDefs.js";
 import { MONGODB } from "./config.js";
+import { checkAuth } from "./utils/checkAuth.js";
 
 //Create the schema so that can be used separately by apolloserver and websockkt server
 const schema = makeExecutableSchema({ typeDefs, resolvers });
@@ -30,9 +31,18 @@ const wsServer = new WebSocketServer({
 
 const pubSub = new PubSub();
 
+const getDynamicContext = async (ctx, msg, args) => {
+  let user = checkAuth(ctx.connectionParams);
+  console.log(user,'zzz uu')
+  return user;
+}
+
 const serverCleanup = useServer(
   {
     schema,
+    // context: async (ctx, msg, args) => {
+    //   return getDynamicContext(ctx, msg, args)
+    // }
     // context: async (ctx, msg, args) => {
     //   return getDynamicContext(ctx, msg, args);
     // },
@@ -63,7 +73,9 @@ const server = new ApolloServer({
 //   });
 
 await server.start();
-app.use("/graphql", cors(), bodyParser.json(), expressMiddleware(server));
+app.use("/graphql", cors(), bodyParser.json(), expressMiddleware(server, {
+   context: async ({req, res})=> ({req})
+}));
 
 const PORT = 4001;
 
