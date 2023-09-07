@@ -88,7 +88,7 @@ export default {
   },
   Subscription: {
     newPost: {
-      subscribe: (_,__, {}) => pubSub.asyncIterator('NEW_POST')
+      subscribe: (_,__,___) => pubSub.asyncIterator('NEW_POST')
     }
   }
 };

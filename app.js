@@ -17,81 +17,79 @@ import resolvers from "./graphql/resolvers/index.js";
 import typeDefs from "./graphql/typeDefs.js";
 import { MONGODB } from "./config.js";
 
-// Create the schema so that can be used separately by apolloserver and websockkt server
-// const schema = makeExecutableSchema({ typeDefs, resolvers });
+//Create the schema so that can be used separately by apolloserver and websockkt server
+const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-// const app = express();
-// const httpServer = createServer();
+const app = express();
+const httpServer = createServer(app);
 
-// const wsServer = new WebSocketServer({
-//   server: httpServer,
-//   path: "/subscriptions",
-// });
+const wsServer = new WebSocketServer({
+  server: httpServer,
+  path: "/subscriptions",
+});
 
 const pubSub = new PubSub();
 
-// const serverCleanup = useServer(
-//   {
-//     schema,
-//     context: async (ctx, msg, args) => {
-//       return getDynamicContext(ctx, msg, args);
-//     },
-//   },
-//   wsServer,
-// );
+const serverCleanup = useServer(
+  {
+    schema,
+    // context: async (ctx, msg, args) => {
+    //   return getDynamicContext(ctx, msg, args);
+    // },
+  },
+  wsServer,
+);
 
-// const server = new ApolloServer({
-//   schema,
-//   plugins: [
-//     ApolloServerPluginDrainHttpServer({ httpServer }),
-//     {
-//       async serverWillStart() {
-//         return {
-//           async drainServer() {
-//             await serverCleanup.dispose();
-//           },
-//         };
-//       },
-//     },
-//   ],
+const server = new ApolloServer({
+  schema,
+  plugins: [
+    ApolloServerPluginDrainHttpServer({ httpServer }),
+    {
+      async serverWillStart() {
+        return {
+          async drainServer() {
+            await serverCleanup.dispose();
+          },
+        };
+      },
+    },
+  ],
   
-// });
+});
 
 // const { url } = await startStandaloneServer(server, {
 //     // from here we pass the headers to all the requests
 //     context: async ({ req }) => ({ req }),
 //   });
 
-// await server.start().then((url)=> {
-//   console.log(server,'zzz urr')
-// });
-// app.use("/graphql", cors(), bodyParser.json(), expressMiddleware(server));
+await server.start();
+app.use("/graphql", cors(), bodyParser.json(), expressMiddleware(server));
 
-// const PORT = 4001;
+const PORT = 4001;
 
-// httpServer.listen(PORT, () => {
-//   console.log("Server is running at ->", PORT);
-//   mongoose.connect(MONGODB).then(async () => {
-//     console.log("Mongo connected!!");
-//   });
-// });
+httpServer.listen(PORT, () => {
+  console.log("Server is running at ->", PORT);
+  mongoose.connect(MONGODB).then(async () => {
+    console.log("Mongo connected!!");
+  });
+});
 
 // console.log(server,'zzz serrr')
 
 
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
+// const server = new ApolloServer({
+//   typeDefs,
+//   resolvers,
+// });
 
-mongoose.connect(MONGODB).then(async () => {
-  console.log("Mongo connected!!");
-  const { url } = await startStandaloneServer(server, {
-    // from here we pass the headers to all the requests
-    context: async ({ req }) => ({ req, pubSub }),
-  });
-});
+// mongoose.connect(MONGODB).then(async () => {
+//   console.log("Mongo connected!!");
+//   const { url } = await startStandaloneServer(server, {
+//     // from here we pass the headers to all the requests
+//     context: async ({ req }) => ({ req, pubSub }),
+//   });
+// });
 
 
 
